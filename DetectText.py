@@ -6,7 +6,8 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-s = 'without regret'
+s = '牛肉 ビーフ 鶏内 チキン エキス 動物性袖脂 ニンソメ コンソメパウダー ゼラチン アルコール 祥 みりん味ポ ラム酒 ワイン ブランディ ウイスキー ショートニング 督掛ルょうゆ 乳化南 ファットスブレッド ' \
+    'コラーゲンベブチド without regret'
 matched_word = ''
 detect_txt = ''
 
@@ -24,6 +25,7 @@ def detect_text(image):
     total_detect_word = ''
     total_detect_matched_word = ''
     st = ''
+    # reader = easyocr.Reader(['ja'], gpu=False)
     reader = easyocr.Reader(['ja', 'en'], gpu=False)
     result = reader.readtext(image)
     for (b, t, p) in result:
