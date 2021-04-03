@@ -7,9 +7,10 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 s = '牛肉 ビーフ 鶏内 チキン エキス 動物性袖脂 ニンソメ コンソメパウダー ゼラチン アルコール 祥 みりん味ポ ラム酒 ワイン ブランディ ウイスキー ショートニング 督掛ルょうゆ 乳化南 ファットスブレッド ' \
-    'コラーゲンベブチド without regret'
+    'コラーゲンベブチド'
 matched_word = ''
 detect_txt = ''
+total_detect = ''
 
 
 def is_match(text):
@@ -25,8 +26,8 @@ def detect_text(image):
     total_detect_word = ''
     total_detect_matched_word = ''
     st = ''
-    # reader = easyocr.Reader(['ja'], gpu=False)
-    reader = easyocr.Reader(['ja', 'en'], gpu=False)
+    reader = easyocr.Reader(['ja'], gpu=False)
+    # reader = easyocr.Reader(['ja', 'en'], gpu=False)
     result = reader.readtext(image)
     for (b, t, p) in result:
         st = t.split()
@@ -38,7 +39,7 @@ def detect_text(image):
 
     #
     # print('image result:', es)
-    return total_detect_matched_word
+    return total_detect_word, total_detect_matched_word
     # return total_detect_word
 
 
@@ -99,13 +100,13 @@ def upload_image():
             else:
                 filename = secure_filename(image.filename)
                 image.save(os.path.join(app.config['IMAGE_UPLOADS'], filename))
-                global detect_txt
-                detect_txt = detect_text(cv2.imread('files/' + filename))
+                global detect_txt, total_detect
+                total_detect, detect_txt = detect_text(cv2.imread('files/' + filename))
                 print('file size: ', get_size('files/' + filename))
                 if detect_txt == '':
-                    return jsonify({'message': 'No data found'})
+                    return jsonify({'total_detect': total_detect, 'message': 'No data found'})
 
-        return jsonify({'message': detect_txt})
+        return jsonify({'total_detect': total_detect, 'message': detect_txt})
         # return redirect(request.url)
     return render_template('upload_image.html')
 
